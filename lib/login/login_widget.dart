@@ -1,3 +1,4 @@
+import '../backend/supabase/supabase.dart';
 import '/auth/supabase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -702,7 +703,13 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             if (user == null) {
                                                               return;
                                                             }
-
+                                                            await SupaFlow
+                                                                .client
+                                                                .from('user')
+                                                                .insert({
+                                                              'id': currentUser!
+                                                                  .uid
+                                                            });
                                                             context.goNamedAuth(
                                                                 'HomePage',
                                                                 context
