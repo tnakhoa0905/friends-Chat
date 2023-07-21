@@ -296,11 +296,20 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                                 final message = messages[index];
                                                 _loadProfileCache(
                                                     message.profileId);
-                                                return _ChatBubble(
-                                                  message: message,
-                                                  profile: _profileCache[
-                                                      message.profileId],
-                                                );
+                                                if (index == 0)
+                                                  return _ChatBubble(
+                                                    message: message,
+                                                    profile: _profileCache[
+                                                        message.profileId],
+                                                    isPadding: 8,
+                                                  );
+                                                else
+                                                  return _ChatBubble(
+                                                    message: message,
+                                                    profile: _profileCache[
+                                                        message.profileId],
+                                                    isPadding: 0,
+                                                  );
                                               }),
                                     ),
                                   ],
@@ -312,7 +321,7 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                               }
                             }),
                       ),
-                      Flexible(
+                      Expanded(
                         child: Material(
                           color: Colors.transparent,
                           elevation: 1.0,
@@ -381,7 +390,8 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                                 focusedErrorBorder:
                                                     UnderlineInputBorder(
                                                   borderSide: BorderSide(
-                                                    color: Color(0x00000000),
+                                                    color: Color.fromARGB(
+                                                        255, 0, 0, 0),
                                                     width: 1.0,
                                                   ),
                                                   borderRadius:
@@ -472,73 +482,78 @@ class _ChatBubble extends StatelessWidget {
     Key? key,
     required this.message,
     required this.profile,
+    required this.isPadding,
   }) : super(key: key);
-
+  final double isPadding;
   final Message message;
   final Profile? profile;
 
   @override
   Widget build(BuildContext context) {
     return message.isMine == true
-        ? Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 15.0, 0.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 0.0, 0.0),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.sizeOf(context).width * 0.7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primary,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                          10.0, 10.0, 10.0, 10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${message.content}',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                dateTimeFormat(
-                                    'relative', random_data.randomDate()),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodySmall
-                                    .override(
-                                      fontFamily: 'Inter',
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ],
+        ? Container(
+            margin: EdgeInsets.only(bottom: isPadding),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 15.0, 0.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 0.0, 0.0),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.sizeOf(context).width * 0.7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primary,
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            10.0, 10.0, 10.0, 10.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${message.content}',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  dateTimeFormat(
+                                      'relative', random_data.randomDate()),
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodySmall
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )
         : Padding(
