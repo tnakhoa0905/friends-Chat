@@ -116,12 +116,17 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                             child: Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 2.0),
-                              child: FutureBuilder<List<UserRow>>(
-                                future: UserTable().querySingleRow(
-                                  queryFn: (q) => q.eq(
-                                    'id',
-                                    widget.idChat,
-                                  ),
+                              child: FutureBuilder<List<FriendRow>>(
+                                future: FriendTable().querySingleRow(
+                                  queryFn: (q) => q
+                                      .eq(
+                                        'id_user',
+                                        currentUserUid,
+                                      )
+                                      .eq(
+                                        'id_friends',
+                                        widget.idChat,
+                                      ),
                                 ),
                                 builder: (context, snapshot) {
                                   // Customize what your widget looks like when it's loading.
@@ -141,11 +146,11 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                       ),
                                     );
                                   }
-                                  List<UserRow> columnUserRowList =
+                                  List<FriendRow> columnFriendRowList =
                                       snapshot.data!;
-                                  final columnUserRow =
-                                      columnUserRowList.isNotEmpty
-                                          ? columnUserRowList.first
+                                  final columnFriendRow =
+                                      columnFriendRowList.isNotEmpty
+                                          ? columnFriendRowList.first
                                           : null;
                                   return Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -183,35 +188,55 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                         ),
                                       ),
                                       Expanded(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Text(
-                                              valueOrDefault<String>(
-                                                columnUserRow?.name,
-                                                '1',
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            context.pushNamed(
+                                              'EditUser',
+                                              queryParameters: {
+                                                'idUser': serializeParam(
+                                                  currentUserUid,
+                                                  ParamType.String,
+                                                ),
+                                                'idFriend': serializeParam(
+                                                  columnFriendRow?.idFriends,
+                                                  ParamType.String,
+                                                ),
+                                              }.withoutNulls,
+                                            );
+                                          },
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Text(
+                                                valueOrDefault<String>(
+                                                  columnFriendRow?.name,
+                                                  '1',
+                                                ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium,
                                               ),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium,
-                                            ),
-                                            Text(
-                                              'last seen recently',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily: 'Inter',
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondaryText,
-                                                        fontSize: 12.0,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                            ),
-                                          ],
+                                              Text(
+                                                'last seen recently',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryText,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Padding(
@@ -230,18 +255,18 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                                 child:
                                                     FlutterFlowExpandedImageView(
                                                   image: Image.network(
-                                                    columnUserRow!.avt!,
+                                                    columnFriendRow.avt!,
                                                     fit: BoxFit.contain,
                                                   ),
                                                   allowRotation: false,
-                                                  tag: columnUserRow!.avt!,
+                                                  tag: columnFriendRow.avt!,
                                                   useHeroAnimation: true,
                                                 ),
                                               ),
                                             );
                                           },
                                           child: Hero(
-                                            tag: columnUserRow!.avt!,
+                                            tag: columnFriendRow!.avt!,
                                             transitionOnUserGestures: true,
                                             child: Container(
                                               width: 40.0,
@@ -251,7 +276,7 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Image.network(
-                                                columnUserRow.avt!,
+                                                columnFriendRow.avt!,
                                               ),
                                             ),
                                           ),
@@ -535,8 +560,7 @@ class _ChatBubble extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  dateTimeFormat(
-                                      'relative', random_data.randomDate()),
+                                  format(message.createdAt, locale: 'en_short'),
                                   style: FlutterFlowTheme.of(context)
                                       .bodySmall
                                       .override(
@@ -617,8 +641,7 @@ class _ChatBubble extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              dateTimeFormat(
-                                  'relative', random_data.randomDate()),
+                              format(message.createdAt, locale: 'en_short'),
                               style: FlutterFlowTheme.of(context)
                                   .bodySmall
                                   .override(

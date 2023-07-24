@@ -1,3 +1,4 @@
+import '../flutter_flow/flutter_flow_icon_button.dart';
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/message_preview_widget.dart';
@@ -90,11 +91,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             12.0, 8.0, 12.0, 8.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   width: 30.0,
@@ -115,12 +117,28 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 ),
                               ],
                             ),
+                            // Generated code for this IconButton Widget...
+                            FlutterFlowIconButton(
+                              borderColor: Color(0x00357BF7),
+                              borderRadius: 20,
+                              borderWidth: 2,
+                              buttonSize: 40,
+                              fillColor: Color(0x00616161),
+                              icon: Icon(
+                                Icons.search_sharp,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 30,
+                              ),
+                              onPressed: () async {
+                                context.pushNamed('addFriends');
+                              },
+                            )
                           ],
                         ),
                       ),
                     ),
-                    FutureBuilder<List<UserRow>>(
-                      future: UserTable().queryRows(
+                    FutureBuilder<List<FriendRow>>(
+                      future: FriendTable().queryRows(
                         queryFn: (q) => q,
                       ),
                       builder: (context, snapshot) {
@@ -138,16 +156,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             ),
                           );
                         }
-                        List<UserRow> listViewUserRowList = snapshot.data!;
+                        List<FriendRow> listViewFriendRowList = snapshot.data!;
                         return ListView.builder(
                           padding: EdgeInsets.zero,
                           primary: false,
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
-                          itemCount: listViewUserRowList.length,
+                          itemCount: listViewFriendRowList.length,
                           itemBuilder: (context, listViewIndex) {
-                            final listViewUserRow =
-                                listViewUserRowList[listViewIndex];
+                            final listViewFriendRow =
+                                listViewFriendRowList[listViewIndex];
+
                             return InkWell(
                               splashColor: Colors.transparent,
                               focusColor: Colors.transparent,
@@ -158,7 +177,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   'audioChatDemo',
                                   queryParameters: {
                                     'idChat': serializeParam(
-                                      listViewUserRow.id,
+                                      listViewFriendRow.idFriends,
                                       ParamType.String,
                                     ),
                                   }.withoutNulls,
@@ -166,13 +185,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               },
                               child: MessagePreviewWidget(
                                 key: Key(
-                                    'Keycqe_${listViewIndex}_of_${listViewUserRowList.length}'),
-                                messageTitle: listViewUserRow.name,
-                                messageContent:
-                                    'Let\'s reconnect Monday and talk about FlutterFlow!',
-                                messageImage: listViewUserRow.avt,
+                                    'Keycqe_${listViewIndex}_of_${listViewFriendRowList.length}'),
+                                messageTitle: listViewFriendRow.name,
+                                messageImage: listViewFriendRow.avt,
                                 isUnread: true,
-                                messageTime: '3:49 PM',
                               ),
                             );
                           },

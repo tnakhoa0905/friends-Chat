@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:chat_app/add_friends/add_friends_widget.dart';
+import 'package:chat_app/edit_user/edit_user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
@@ -115,7 +117,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               name: 'EditProfile',
               path: 'editProfile',
               builder: (context, params) => EditProfileWidget(),
-            )
+            ),
+            FFRoute(
+              name: 'AddFriends',
+              path: 'addFriends',
+              builder: (context, params) => AddFriendsWidget(),
+            ),
+            FFRoute(
+                name: 'EditUser',
+                path: 'editUser',
+                builder: (context, params) => EditUserWidget(
+                      idUser: params.getParam('idUser', ParamType.String),
+                      idFriend: params.getParam('idFriend', ParamType.String),
+                    ))
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

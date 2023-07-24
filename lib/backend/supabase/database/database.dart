@@ -10,3 +10,4 @@ export 'tables/favorite.dart';
 export 'tables/messages.dart';
 export 'tables/house.dart';
 export 'tables/user.dart';
+export 'tables/friend.dart';
