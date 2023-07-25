@@ -545,14 +545,16 @@ class _ChatBubble extends StatelessWidget {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  '${message.content}',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        fontFamily: 'Inter',
-                                        fontWeight: FontWeight.normal,
-                                      ),
+                                Expanded(
+                                  child: Text(
+                                    '${message.content}',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                  ),
                                 ),
                               ],
                             ),
