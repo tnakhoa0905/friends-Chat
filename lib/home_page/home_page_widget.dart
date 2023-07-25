@@ -1,4 +1,5 @@
 import 'package:chat_app/components/empty_list_widget.dart';
+import 'package:chat_app/flutter_flow/flutter_flow_widgets.dart';
 
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '/auth/supabase_auth/auth_util.dart';
@@ -120,20 +121,32 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               ],
                             ),
                             // Generated code for this IconButton Widget...
-                            FlutterFlowIconButton(
-                              borderColor: Color(0x00357BF7),
-                              borderRadius: 20,
-                              borderWidth: 2,
-                              buttonSize: 40,
-                              fillColor: Color(0x00616161),
-                              icon: Icon(
-                                Icons.search_sharp,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 30,
-                              ),
-                              onPressed: () async {
+                            FFButtonWidget(
+                              onPressed: () {
                                 context.pushNamed('addFriends');
                               },
+                              text: 'Add Friend',
+                              options: FFButtonOptions(
+                                height: 40,
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    24, 0, 24, 0),
+                                iconPadding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                color:
+                                    FlutterFlowTheme.of(context).secondaryText,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Inter',
+                                      color: Colors.white,
+                                    ),
+                                elevation: 3,
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             )
                           ],
                         ),
@@ -143,6 +156,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       future: FriendTable().queryRows(
                         queryFn: (q) => q
                             .eq('active', true)
+                            .eq('id_user', currentUser!.uid)
                             .neq('id_friends', currentUser!.uid),
                       ),
                       builder: (context, snapshot) {

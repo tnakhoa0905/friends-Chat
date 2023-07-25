@@ -298,6 +298,15 @@ class _ChangImageWidgetState extends State<ChangImageWidget> {
                                       currentUserUid,
                                     ),
                                   );
+                                  await FriendTable().update(
+                                    data: {
+                                      'avt': _model.uploadedFileUrl,
+                                    },
+                                    matchingRows: (rows) => rows.eq(
+                                      'id_friends',
+                                      currentUserUid,
+                                    ),
+                                  );
                                   context.pop();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
