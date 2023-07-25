@@ -1,3 +1,5 @@
+import 'package:chat_app/components/empty_list_widget.dart';
+
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/loading_widget.dart';
@@ -33,7 +35,7 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
     super.initState();
     _model = createModel(context, () => AddFriendsModel());
 
-    _model.searchFriendController ??= TextEditingController(text: 'khoa');
+    _model.searchFriendController ??= TextEditingController();
   }
 
   @override
@@ -70,7 +72,7 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
             },
           ),
           title: Text(
-            'Search patients',
+            'Tìm kiếm bạn bè',
             style: FlutterFlowTheme.of(context).headlineSmall,
           ),
           actions: [],
@@ -96,7 +98,6 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                   ),
                   obscureText: false,
                   decoration: InputDecoration(
-                    labelText: 'Search for patients...',
                     labelStyle: FlutterFlowTheme.of(context).bodySmall,
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -105,6 +106,7 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                       ),
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    hintText: 'Nhập tên người dùng bạn muốn tìm',
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0x00000000),
@@ -165,6 +167,9 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                         );
                       }
                       List<UserRow> listViewUserRowList = snapshot.data!;
+                      if (listViewUserRowList.isEmpty) {
+                        return EmptyListWidget();
+                      }
                       return ListView.builder(
                         padding: EdgeInsets.zero,
                         scrollDirection: Axis.vertical,
@@ -172,7 +177,9 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                         itemBuilder: (context, listViewIndex) {
                           final listViewUserRow =
                               listViewUserRowList[listViewIndex];
-
+                          if (listViewUserRow.id == currentUser!.uid) {
+                            return EmptyListWidget();
+                          }
                           return Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
                             child: Container(
@@ -274,7 +281,7 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                                             containerFriendRowList.isNotEmpty
                                                 ? containerFriendRowList.first
                                                 : null;
-
+                                        bool _isButtonDisabled = true;
                                         return Container(
                                           width: 40,
                                           height: 40,
@@ -292,15 +299,26 @@ class _AddFriendsWidgetState extends State<AddFriendsWidget>
                                               hoverColor: Colors.transparent,
                                               highlightColor:
                                                   Colors.transparent,
-                                              onTap: () async {
-                                                await FriendTable().insert({
-                                                  'id_user': currentUserUid,
-                                                  'id_friends':
-                                                      listViewUserRow.id,
-                                                  'name': listViewUserRow.name,
-                                                  'avt': listViewUserRow.avt
-                                                });
-                                              },
+                                              onTap: _isButtonDisabled == false
+                                                  ? null
+                                                  : () async {
+                                                      setState(() {
+                                                        _isButtonDisabled =
+                                                            false;
+                                                      });
+                                                      await FriendTable()
+                                                          .insert({
+                                                        'id_user':
+                                                            currentUserUid,
+                                                        'id_friends':
+                                                            listViewUserRow.id,
+                                                        'name': listViewUserRow
+                                                            .name,
+                                                        'avt':
+                                                            listViewUserRow.avt
+                                                      });
+                                                      print('ok');
+                                                    },
                                               child: Card(
                                                 clipBehavior:
                                                     Clip.antiAliasWithSaveLayer,

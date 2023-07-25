@@ -1,3 +1,5 @@
+import 'package:chat_app/components/empty_list_widget.dart';
+
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
@@ -111,7 +113,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   ),
                                 ),
                                 Text(
-                                  'Hello, ${columnUserRow?.name}',
+                                  'Xin chào, ${columnUserRow.name}',
                                   style:
                                       FlutterFlowTheme.of(context).titleMedium,
                                 ),
@@ -139,7 +141,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     ),
                     FutureBuilder<List<FriendRow>>(
                       future: FriendTable().queryRows(
-                        queryFn: (q) => q,
+                        queryFn: (q) => q
+                            .eq('active', true)
+                            .neq('id_friends', currentUser!.uid),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -157,6 +161,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           );
                         }
                         List<FriendRow> listViewFriendRowList = snapshot.data!;
+                        if (listViewFriendRowList.isEmpty) {
+                          return EmptyListWidget();
+                        }
                         return ListView.builder(
                           padding: EdgeInsets.zero,
                           primary: false,

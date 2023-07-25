@@ -63,7 +63,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             },
           ),
           title: Text(
-            'Edit Profile',
+            'Chỉnh sửa thông tin',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Lexend Deca',
                   color: Color(0xFF090F13),
@@ -162,7 +162,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                                     },
                                   ).then((value) => setState(() {}));
                                 },
-                                text: 'Edit Photo',
+                                text: 'Chỉnh sửa ảnh',
                                 options: FFButtonOptions(
                                   width: 130.0,
                                   height: 40.0,

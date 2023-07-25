@@ -343,7 +343,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                                                       .fromSTEB(
                                                           12.0, 0.0, 0.0, 0.0),
                                                   child: Text(
-                                                    'Edit Profile',
+                                                    'Chỉnh sửa thông tin',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -381,7 +381,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                                           context.goNamedAuth(
                                               'Login', context.mounted);
                                         },
-                                        text: 'Log Out',
+                                        text: 'Đăng xuất',
                                         options: FFButtonOptions(
                                           width: 150.0,
                                           height: 44.0,

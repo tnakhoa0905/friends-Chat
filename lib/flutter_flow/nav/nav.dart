@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chat_app/add_friends/add_friends_widget.dart';
 import 'package:chat_app/edit_user/edit_user_widget.dart';
+import 'package:chat_app/friend_page/friend_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
@@ -129,7 +130,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 builder: (context, params) => EditUserWidget(
                       idUser: params.getParam('idUser', ParamType.String),
                       idFriend: params.getParam('idFriend', ParamType.String),
-                    ))
+                    )),
+            FFRoute(
+                name: 'Friend',
+                path: 'friend',
+                builder: (context, params) => FriendWidget())
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
@@ -315,7 +320,7 @@ class FFRoute {
               ? Container(
                   color: Colors.transparent,
                   child: Image.asset(
-                    'assets/images/CleanShot_2023-01-31_at_14.09.21@2x.png',
+                    'assets/images/app_launcher_icon.png',
                     fit: BoxFit.cover,
                   ),
                 )
