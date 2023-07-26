@@ -54,6 +54,7 @@ class _FriendWidgetState extends State<FriendWidget> {
           actions: [],
           centerTitle: false,
           elevation: 1,
+          shadowColor: FlutterFlowTheme.of(context).secondaryText,
         ),
         body: SingleChildScrollView(
           child: Column(

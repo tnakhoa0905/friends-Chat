@@ -84,8 +84,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         boxShadow: [
                           BoxShadow(
                             blurRadius: 1.0,
-                            color: Color(0x33000000),
-                            offset: Offset(0.0, 2.0),
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            offset: Offset(0.0, 1.0),
                           )
                         ],
                       ),
@@ -151,6 +151,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 8,
                     ),
                     FutureBuilder<List<FriendRow>>(
                       future: FriendTable().queryRows(

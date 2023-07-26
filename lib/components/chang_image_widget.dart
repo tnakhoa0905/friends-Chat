@@ -1,3 +1,6 @@
+import 'package:aligned_dialog/aligned_dialog.dart';
+import 'package:chat_app/components/check_update_image_widget.dart';
+
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
@@ -20,6 +23,7 @@ class ChangImageWidget extends StatefulWidget {
 
 class _ChangImageWidgetState extends State<ChangImageWidget> {
   late ChangImageModel _model;
+  late bool isLoading;
 
   @override
   void setState(VoidCallback callback) {
@@ -31,6 +35,7 @@ class _ChangImageWidgetState extends State<ChangImageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ChangImageModel());
+    isLoading = true;
   }
 
   @override
@@ -70,7 +75,7 @@ class _ChangImageWidgetState extends State<ChangImageWidget> {
                     fillColor: Color(0x00616161),
                     icon: Icon(
                       Icons.close,
-                      color: FlutterFlowTheme.of(context).primaryText,
+                      color: FlutterFlowTheme.of(context).secondaryText,
                       size: 24,
                     ),
                     onPressed: () async {
@@ -256,6 +261,7 @@ class _ChangImageWidgetState extends State<ChangImageWidget> {
                                             selectedUploadedFiles.first;
                                         _model.uploadedFileUrl =
                                             downloadUrls.first;
+                                        isLoading = false;
                                       });
                                     } else {
                                       setState(() {});
@@ -288,41 +294,67 @@ class _ChangImageWidgetState extends State<ChangImageWidget> {
                                 ),
                               ),
                               FFButtonWidget(
-                                onPressed: () async {
-                                  await UserTable().update(
-                                    data: {
-                                      'avt': _model.uploadedFileUrl,
-                                    },
-                                    matchingRows: (rows) => rows.eq(
-                                      'id',
-                                      currentUserUid,
-                                    ),
-                                  );
-                                  await FriendTable().update(
-                                    data: {
-                                      'avt': _model.uploadedFileUrl,
-                                    },
-                                    matchingRows: (rows) => rows.eq(
-                                      'id_friends',
-                                      currentUserUid,
-                                    ),
-                                  );
-                                  context.pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Update image susscess...',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
-                                      ),
-                                      duration: Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context).primary,
-                                    ),
-                                  );
-                                },
+                                onPressed: isLoading == true
+                                    ? () async {
+                                        await showAlignedDialog(
+                                          context: context,
+                                          isGlobal: true,
+                                          avoidOverflow: false,
+                                          targetAnchor: AlignmentDirectional(
+                                                  0, 0)
+                                              .resolve(
+                                                  Directionality.of(context)),
+                                          followerAnchor: AlignmentDirectional(
+                                                  0, 0)
+                                              .resolve(
+                                                  Directionality.of(context)),
+                                          builder: (dialogContext) {
+                                            return Material(
+                                              color: Colors.transparent,
+                                              child: CheckUpdateIamgeWidget(),
+                                            );
+                                          },
+                                        ).then((value) => setState(() {}));
+                                      }
+                                    : () async {
+                                        await UserTable().update(
+                                          data: {
+                                            'avt': _model.uploadedFileUrl,
+                                          },
+                                          matchingRows: (rows) => rows.eq(
+                                            'id',
+                                            currentUserUid,
+                                          ),
+                                        );
+                                        await FriendTable().update(
+                                          data: {
+                                            'avt': _model.uploadedFileUrl,
+                                          },
+                                          matchingRows: (rows) => rows.eq(
+                                            'id_friends',
+                                            currentUserUid,
+                                          ),
+                                        );
+                                        context.pop();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Update image susscess...',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            duration:
+                                                Duration(milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primary,
+                                          ),
+                                        );
+                                      },
                                 text: 'Save Changes',
                                 options: FFButtonOptions(
                                   width: 150.0,

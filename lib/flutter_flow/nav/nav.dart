@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chat_app/add_friends/add_friends_widget.dart';
+import 'package:chat_app/create_profile/create_profile_widget.dart';
 import 'package:chat_app/edit_user/edit_user_widget.dart';
 import 'package:chat_app/friend_page/friend_widget.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +135,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             FFRoute(
                 name: 'Friend',
                 path: 'friend',
-                builder: (context, params) => FriendWidget())
+                builder: (context, params) => FriendWidget()),
+            FFRoute(
+                name: 'CreateProfile',
+                path: 'createProfile',
+                builder: (context, params) => CreateProfileWidget()),
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
@@ -320,7 +325,7 @@ class FFRoute {
               ? Container(
                   color: Colors.transparent,
                   child: Image.asset(
-                    'assets/images/app_launcher_icon.png',
+                    'assets/images/wallpaper.jpg',
                     fit: BoxFit.cover,
                   ),
                 )

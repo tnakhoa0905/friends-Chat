@@ -46,7 +46,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           automaticallyImplyLeading: false,
           leading: FlutterFlowIconButton(
             borderColor: Colors.transparent,
@@ -55,7 +55,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             buttonSize: 60,
             icon: Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF090F13),
+              color: FlutterFlowTheme.of(context).primaryText,
               size: 30,
             ),
             onPressed: () async {
@@ -66,7 +66,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             'Chỉnh sửa thông tin',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Lexend Deca',
-                  color: Color(0xFF090F13),
+                  color: FlutterFlowTheme.of(context).primaryText,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -81,104 +81,243 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 0.0, 0.0),
-                child: FutureBuilder<List<UserRow>>(
-                  future: UserTable().querySingleRow(
-                    queryFn: (q) => q.eq(
-                      'id',
-                      currentUserUid,
+              Align(
+                alignment: Alignment(0, 0),
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 0.0, 0.0),
+                  child: FutureBuilder<List<UserRow>>(
+                    future: UserTable().querySingleRow(
+                      queryFn: (q) => q.eq(
+                        'id',
+                        currentUserUid,
+                      ),
                     ),
-                  ),
-                  builder: (context, snapshot) {
-                    // Customize what your widget looks like when it's loading.
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: SizedBox(
-                          width: 50.0,
-                          height: 50.0,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              FlutterFlowTheme.of(context).primary,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    List<UserRow> containerUserRowList = snapshot.data!;
-                    final containerUserRow = containerUserRowList.isNotEmpty
-                        ? containerUserRowList.first
-                        : null;
-                    return Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-
-                        children: [
-                          Align(
-                            alignment: AlignmentDirectional(0.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 20.0, 0.0, 0.0),
-                              child: Container(
-                                width: 80.0,
-                                height: 80.0,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.network(
-                                  containerUserRow!.avt!,
-                                ),
+                    builder: (context, snapshot) {
+                      // Customize what your widget looks like when it's loading.
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: SizedBox(
+                            width: 50.0,
+                            height: 50.0,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                FlutterFlowTheme.of(context).primary,
                               ),
                             ),
                           ),
-                          Builder(
-                            builder: (context) => Padding(
+                        );
+                      }
+                      List<UserRow> containerUserRowList = snapshot.data!;
+                      final containerUserRow = containerUserRowList.isNotEmpty
+                          ? containerUserRowList.first
+                          : null;
+                      return Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          // crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            Align(
+                              alignment: AlignmentDirectional(0.0, 0.0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 20.0, 0.0, 0.0),
+                                child: Container(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.network(
+                                    containerUserRow!.avt!,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Builder(
+                              builder: (context) => Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 12.0, 0.0, 12.0),
+                                child: FFButtonWidget(
+                                  onPressed: () async {
+                                    await showAlignedDialog(
+                                      context: context,
+                                      isGlobal: true,
+                                      avoidOverflow: false,
+                                      targetAnchor: AlignmentDirectional(
+                                              0.0, 0.0)
+                                          .resolve(Directionality.of(context)),
+                                      followerAnchor: AlignmentDirectional(
+                                              0.0, 0.0)
+                                          .resolve(Directionality.of(context)),
+                                      builder: (dialogContext) {
+                                        return Material(
+                                          color: Colors.transparent,
+                                          child: GestureDetector(
+                                            onTap: () => FocusScope.of(context)
+                                                .requestFocus(
+                                                    _model.unfocusNode),
+                                            child: ChangImageWidget(),
+                                          ),
+                                        );
+                                      },
+                                    ).then((value) => setState(() {}));
+                                  },
+                                  text: 'Chỉnh sửa ảnh',
+                                  options: FFButtonOptions(
+                                    width: 130.0,
+                                    height: 40.0,
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Lexend Deca',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                    borderSide: BorderSide(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  8.0, 8.0, 8.0, 8.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _model.textController ??=
+                                          TextEditingController(
+                                        text: containerUserRow?.name,
+                                      ),
+                                      obscureText: false,
+                                      decoration: InputDecoration(
+                                        hintStyle: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .override(
+                                              fontFamily: 'Lexend Deca',
+                                              color: Color(0xFF95A1AC),
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color(0xFF95A1AC),
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color(0xFF95A1AC),
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Lexend Deca',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                      maxLines: null,
+                                      validator: _model.textControllerValidator
+                                          .asValidator(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 12.0, 0.0, 12.0),
                               child: FFButtonWidget(
                                 onPressed: () async {
-                                  await showAlignedDialog(
-                                    context: context,
-                                    isGlobal: true,
-                                    avoidOverflow: false,
-                                    targetAnchor: AlignmentDirectional(0.0, 0.0)
-                                        .resolve(Directionality.of(context)),
-                                    followerAnchor: AlignmentDirectional(
-                                            0.0, 0.0)
-                                        .resolve(Directionality.of(context)),
-                                    builder: (dialogContext) {
-                                      return Material(
-                                        color: Colors.transparent,
-                                        child: GestureDetector(
-                                          onTap: () => FocusScope.of(context)
-                                              .requestFocus(_model.unfocusNode),
-                                          child: ChangImageWidget(),
-                                        ),
-                                      );
+                                  await UserTable().update(
+                                    data: {
+                                      'name': _model.textController.text,
                                     },
-                                  ).then((value) => setState(() {}));
+                                    matchingRows: (rows) => rows.eq(
+                                      'id',
+                                      containerUserRow?.id,
+                                    ),
+                                  );
+                                  setState(() {});
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Update susscess',
+                                        style: TextStyle(
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                        ),
+                                      ),
+                                      duration: Duration(milliseconds: 4000),
+                                      backgroundColor:
+                                          FlutterFlowTheme.of(context).primary,
+                                    ),
+                                  );
                                 },
-                                text: 'Chỉnh sửa ảnh',
+                                text: 'Save Changes',
                                 options: FFButtonOptions(
-                                  width: 130.0,
-                                  height: 40.0,
+                                  width: 230.0,
+                                  height: 50.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   iconPadding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
-                                  color: Color(0xFFF1F4F8),
+                                  color: Color(0xFF4B39EF),
                                   textStyle: FlutterFlowTheme.of(context)
-                                      .bodyMedium
+                                      .bodySmall
                                       .override(
                                         fontFamily: 'Lexend Deca',
-                                        color: Color(0xFF090F13),
+                                        color: Colors.white,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.normal,
                                       ),
+                                  elevation: 3.0,
                                   borderSide: BorderSide(
                                     color: Colors.transparent,
                                     width: 1.0,
@@ -186,139 +325,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                8.0, 8.0, 8.0, 8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _model.textController ??=
-                                        TextEditingController(
-                                      text: containerUserRow?.name,
-                                    ),
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      hintStyle: FlutterFlowTheme.of(context)
-                                          .bodySmall
-                                          .override(
-                                            fontFamily: 'Lexend Deca',
-                                            color: Color(0xFF95A1AC),
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFF95A1AC),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFF95A1AC),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .alternate,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .alternate,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily: 'Lexend Deca',
-                                          color: Color(0xFF090F13),
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                    maxLines: null,
-                                    validator: _model.textControllerValidator
-                                        .asValidator(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 12.0, 0.0, 12.0),
-                            child: FFButtonWidget(
-                              onPressed: () async {
-                                await UserTable().update(
-                                  data: {
-                                    'name': _model.textController.text,
-                                  },
-                                  matchingRows: (rows) => rows.eq(
-                                    'id',
-                                    containerUserRow?.id,
-                                  ),
-                                );
-                                setState(() {});
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Update susscess',
-                                      style: TextStyle(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                      ),
-                                    ),
-                                    duration: Duration(milliseconds: 4000),
-                                    backgroundColor:
-                                        FlutterFlowTheme.of(context).primary,
-                                  ),
-                                );
-                              },
-                              text: 'Save Changes',
-                              options: FFButtonOptions(
-                                width: 230.0,
-                                height: 50.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                color: Color(0xFF4B39EF),
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .bodySmall
-                                    .override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Colors.white,
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                elevation: 3.0,
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
