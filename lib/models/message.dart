@@ -4,33 +4,40 @@ class Message {
   final String id;
 
   /// ID of the user who posted the message
-  final String profileId;
+  final String userId;
 
   /// Text content of the message
-  final String content;
+  final int roomId;
+
+  /// Text content of the message
+  final String message;
+
+  /// Whether the message is sent by the user or not.
+  final bool isMine;
 
   /// Date and time when the message was created
   final DateTime createdAt;
 
-  /// Whether the message is sent by the user or not.
-  final bool isMine;
-  final String idChat;
+  /// Date and time when the message was created
+  final String type;
   Message({
     required this.id,
-    required this.profileId,
-    required this.content,
-    required this.createdAt,
+    required this.userId,
+    required this.roomId,
+    required this.message,
+    required this.type,
     required this.isMine,
-    required this.idChat,
+    required this.createdAt,
   });
 
   Message.fromMap(
     Map<String, dynamic> map,
     String myUserId,
   )   : id = map['id'],
-        profileId = map['profile_id'],
-        content = map['content'],
-        createdAt = DateTime.parse(map['created_at']),
-        isMine = myUserId == map['profile_id'],
-        idChat = map['id_chat'];
+        userId = map['user_id'],
+        roomId = map['room_id'],
+        message = map['message'],
+        isMine = myUserId == map['user_id'],
+        type = map['type'],
+        createdAt = DateTime.parse(map['created_at']);
 }

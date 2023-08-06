@@ -1,4 +1,10 @@
+import 'dart:async';
+
+import 'package:chat_app/balance_history/balance_history_widget.dart';
 import 'package:chat_app/friend_page/friend_widget.dart';
+import 'package:chat_app/notifications/fcm_notification.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +22,42 @@ import 'flutter_flow/internationalization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'flutter_flow/nav/nav.dart';
 import 'index.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'High Importance Notifications', // title
+  playSound: true, // description
+  importance: Importance.max,
+);
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('A bg message just showed up :  ${message.messageId}');
+}
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
 
   await SupaFlow.initialize();
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
-
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
   runApp(ChangeNotifierProvider(
     create: (context) => appState,
     child: MyApp(),
@@ -108,12 +140,76 @@ class NavBarPage extends StatefulWidget {
 class _NavBarPageState extends State<NavBarPage> {
   String _currentPageName = 'HomePage';
   late Widget? _currentPage;
+  NotificationFCM notificationFCM = NotificationFCM();
 
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        context.pushNamed(
+          'audioChatDemo',
+          queryParameters: {
+            'idChat': serializeParam(
+              message.data['id_room'],
+              ParamType.int,
+            ),
+          }.withoutNulls,
+        );
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print(message.data);
+      print('****' * 10);
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      Future.delayed(
+        Duration.zero,
+        () {
+          context.pushNamed(
+            'audioChatDemo',
+            queryParameters: {
+              'idChat': serializeParam(
+                message.data['id_room'],
+                ParamType.int,
+              ),
+            }.withoutNulls,
+          );
+        },
+      );
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              color: Colors.blue,
+              playSound: true,
+              icon: '@mipmap/ic_launcher',
+            ),
+          ),
+        );
+      }
+    });
     _currentPageName = widget.initialPage ?? _currentPageName;
     _currentPage = widget.page;
+    notificationFCM.getDeviceToken();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
   }
 
   @override
@@ -121,6 +217,7 @@ class _NavBarPageState extends State<NavBarPage> {
     final tabs = {
       'HomePage': HomePageWidget(),
       'Friend': FriendWidget(),
+      'BalanceHistory': BalanceHistoryWidget(),
       'Profile': ProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
@@ -154,6 +251,14 @@ class _NavBarPageState extends State<NavBarPage> {
               size: 24.0,
             ),
             label: 'Friend',
+            tooltip: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.monetization_on_outlined,
+              size: 24.0,
+            ),
+            label: 'Balance',
             tooltip: '',
           ),
           BottomNavigationBarItem(

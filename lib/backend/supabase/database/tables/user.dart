@@ -28,4 +28,14 @@ class UserRow extends SupabaseDataRow {
 
   int? get role => getField<int>('role');
   set role(int? value) => setField<int>('role', value);
+
+  String? get deviceToken => getField<String>('device_token');
+  set deviceToken(String? value) => setField<String>('device_token', value);
+
+  double? get openingBalance => getField<double>('opening_balance');
+  set openingBalance(double? value) =>
+      setField<double>('opening_balance', value);
+
+  DateTime? get startDate => getField<DateTime>('start_date');
+  set startDate(DateTime? value) => setField<DateTime>('start_date', value);
 }

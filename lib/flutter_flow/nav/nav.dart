@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:chat_app/add_friends/add_friends_widget.dart';
+import 'package:chat_app/add_member_chat/add_member_chat_widget.dart';
+import 'package:chat_app/balance_history/balance_history_widget.dart';
+import 'package:chat_app/create_group_chat/create_group_chat_widget.dart';
 import 'package:chat_app/create_profile/create_profile_widget.dart';
 import 'package:chat_app/edit_user/edit_user_widget.dart';
 import 'package:chat_app/friend_page/friend_widget.dart';
+import 'package:chat_app/group_chat_detail/group_chat_detail_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
@@ -100,7 +104,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               name: 'audioChatDemo',
               path: 'audioChatDemo',
               builder: (context, params) => AudioChatDemoWidget(
-                idChat: params.getParam('idChat', ParamType.String),
+                idChat: params.getParam('idChat', ParamType.int),
               ),
             ),
             FFRoute(
@@ -130,7 +134,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 path: 'editUser',
                 builder: (context, params) => EditUserWidget(
                       idUser: params.getParam('idUser', ParamType.String),
-                      idFriend: params.getParam('idFriend', ParamType.String),
+                      idRoom: params.getParam('idRoom', ParamType.int),
+                      isUser: params.getParam('isUser', ParamType.bool),
                     )),
             FFRoute(
                 name: 'Friend',
@@ -140,6 +145,27 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 name: 'CreateProfile',
                 path: 'createProfile',
                 builder: (context, params) => CreateProfileWidget()),
+            FFRoute(
+                name: 'GroupChatDetail',
+                path: 'groupChatDetail',
+                builder: (context, params) => GroupChatDetailWidget(
+                      roomId: params.getParam('idRoom', ParamType.int),
+                    )),
+            FFRoute(
+                name: 'addMemberChat',
+                path: 'addMemberChat',
+                builder: (context, params) => AddMemberChatWidget(
+                      roomId: params.getParam('idRoom', ParamType.int),
+                    )),
+            FFRoute(
+                name: 'CreateGroupChat',
+                path: 'createGroupChat',
+                builder: (context, params) => CreateGroupChatWidget()),
+            FFRoute(
+              name: 'BalanceHistory',
+              path: 'balanceHistory',
+              builder: (context, params) => BalanceHistoryWidget(),
+            )
           ].map((r) => r.toRoute(appStateNotifier)).toList(),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

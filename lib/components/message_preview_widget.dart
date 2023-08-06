@@ -53,20 +53,20 @@ class _MessagePreviewWidgetState extends State<MessagePreviewWidget> {
     context.watch<FFAppState>();
 
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
+      padding: EdgeInsetsDirectional.fromSTEB(16.0, 6.0, 16.0, 0.0),
       child: Container(
         width: double.infinity,
         height: 65.0,
         decoration: BoxDecoration(),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (widget.isUnread ?? true)
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 12.0, 0.0),
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0.0, 0, 0.0),
                   child: Container(
                     width: 45.0,
                     height: 45.0,
@@ -114,6 +114,9 @@ class _MessagePreviewWidgetState extends State<MessagePreviewWidget> {
                                           lineHeight: 1.2,
                                         ),
                                   ),
+                                ),
+                                SizedBox(
+                                  width: 12,
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,

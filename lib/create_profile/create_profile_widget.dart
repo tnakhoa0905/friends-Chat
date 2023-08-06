@@ -30,7 +30,7 @@ class _CreateProfileWidgetState extends State<CreateProfileWidget> {
     super.initState();
     _model = createModel(context, () => CreateProfileModel());
 
-    _model.nameController ??= TextEditingController();
+    _model.nameController ??= TextEditingController(text: '');
   }
 
   @override
@@ -256,7 +256,9 @@ class _CreateProfileWidgetState extends State<CreateProfileWidget> {
                       padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                       child: FFButtonWidget(
                         onPressed: () async {
-                          if (_model.uploadedFileUrl.contains('') &&
+                          print(_model.nameController.text);
+                          print(_model.uploadedFileUrl.isEmpty);
+                          if (_model.uploadedFileUrl.isEmpty &&
                               _model.nameController.text.contains('')) {
                             await UserTable().insert({
                               'id': currentUserUid,
@@ -266,7 +268,7 @@ class _CreateProfileWidgetState extends State<CreateProfileWidget> {
                               'id': currentUserUid,
                               'avt': _model.uploadedFileUrl,
                             });
-                          } else if (_model.uploadedFileUrl.contains('')) {
+                          } else if (_model.uploadedFileUrl.isEmpty) {
                             await UserTable().insert({
                               'id': currentUserUid,
                               'name': _model.nameController.text,

@@ -1,9 +1,13 @@
+import 'package:chat_app/backend/supabase/database/tables/group_chat.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+
 import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '/auth/supabase_auth/auth_util.dart';
@@ -14,17 +18,20 @@ class EditUserWidget extends StatefulWidget {
   const EditUserWidget({
     Key? key,
     required this.idUser,
-    required this.idFriend,
+    required this.idRoom,
+    required this.isUser,
   }) : super(key: key);
 
-  final String? idUser;
-  final String? idFriend;
+  final String idUser;
+  final int idRoom;
+  final bool isUser;
 
   @override
   _EditUserWidgetState createState() => _EditUserWidgetState();
 }
 
-class _EditUserWidgetState extends State<EditUserWidget> {
+class _EditUserWidgetState extends State<EditUserWidget>
+    with TickerProviderStateMixin {
   late EditUserModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,6 +49,48 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     super.dispose();
   }
 
+  final animationsMap = {
+    'containerOnPageLoadAnimation1': AnimationInfo(
+      trigger: AnimationTrigger.onPageLoad,
+      effects: [
+        VisibilityEffect(duration: 200.ms),
+        FadeEffect(
+          curve: Curves.easeInOut,
+          delay: 200.ms,
+          duration: 600.ms,
+          begin: 0,
+          end: 1,
+        ),
+        MoveEffect(
+          curve: Curves.easeInOut,
+          delay: 200.ms,
+          duration: 600.ms,
+          begin: Offset(0, 60),
+          end: Offset(0, 0),
+        ),
+      ],
+    ),
+    'containerOnPageLoadAnimation2': AnimationInfo(
+      trigger: AnimationTrigger.onPageLoad,
+      effects: [
+        VisibilityEffect(duration: 200.ms),
+        FadeEffect(
+          curve: Curves.easeInOut,
+          delay: 200.ms,
+          duration: 600.ms,
+          begin: 0,
+          end: 1,
+        ),
+        MoveEffect(
+          curve: Curves.easeInOut,
+          delay: 200.ms,
+          duration: 600.ms,
+          begin: Offset(0, 60),
+          end: Offset(0, 0),
+        ),
+      ],
+    ),
+  };
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -67,7 +116,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
           },
         ),
         title: Text(
-          'Edit Profile Friend',
+          widget.isUser == true ? 'Edit Profile Friend' : 'Edit Group Chat',
           style: FlutterFlowTheme.of(context).headlineMedium.override(
                 fontFamily: 'Inter',
                 color: FlutterFlowTheme.of(context).primaryText,
@@ -103,18 +152,12 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   ),
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
-                    child: FutureBuilder<List<FriendRow>>(
-                      future: FriendTable().querySingleRow(
-                        queryFn: (q) => q
-                            .eq(
-                              'id_friends',
-                              widget.idFriend,
-                            )
-                            .eq(
-                              'id_user',
-                              currentUser!.uid,
-                            ),
-                      ),
+                    child: FutureBuilder<List<GroupChatRow>>(
+                      future: GroupChatTable().querySingleRow(
+                          queryFn: (q) => q.eq(
+                                'id',
+                                widget.idRoom,
+                              )),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
                         if (!snapshot.hasData) {
@@ -130,10 +173,12 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                             ),
                           );
                         }
-                        List<FriendRow> columnFriendRowList = snapshot.data!;
-                        final columnFriendRow = columnFriendRowList.isNotEmpty
-                            ? columnFriendRowList.first
-                            : null;
+                        List<GroupChatRow> columnGroupChatRowList =
+                            snapshot.data!;
+                        final columnGroupChatRow =
+                            columnGroupChatRowList.isNotEmpty
+                                ? columnGroupChatRowList.first
+                                : null;
                         return Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -141,23 +186,32 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                               alignment: AlignmentDirectional(0, 0),
                               child: Padding(
                                 padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                                child: Container(
-                                  width: 80,
-                                  height: 80,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                    EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
+                                child: Card(
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
                                   ),
-                                  child: Image.network(
-                                    columnFriendRow!.avt!,
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        2, 2, 2, 2),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(60),
+                                      child: Image.network(
+                                        columnGroupChatRow!.avt!,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16, 16, 16, 16),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -165,7 +219,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                                     child: TextFormField(
                                       controller: _model.textController ??=
                                           TextEditingController(
-                                        text: columnFriendRow?.name,
+                                        text: columnGroupChatRow!.name,
                                       ),
                                       obscureText: false,
                                       decoration: InputDecoration(
@@ -216,25 +270,177 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                                 ],
                               ),
                             ),
+                            if (columnGroupChatRow.isGroup == true)
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 16),
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    context.pushNamed(
+                                      'GroupChatDetail',
+                                      queryParameters: {
+                                        'idRoom': serializeParam(
+                                          widget.idRoom,
+                                          ParamType.int,
+                                        ),
+                                      }.withoutNulls,
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBackground,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8, 12, 8, 12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    8, 0, 0, 0),
+                                            child: Icon(
+                                              Icons.people,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                              size: 24,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    12, 0, 0, 0),
+                                            child: Text(
+                                              'Xem thành viên đoạn chat',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Plus Jakarta Sans',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ).animateOnPageLoad(animationsMap[
+                                    'containerOnPageLoadAnimation1']!),
+                              ),
+                            if (columnGroupChatRow.isGroup == true)
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 0),
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    context.pushNamed(
+                                      'addMemberChat',
+                                      queryParameters: {
+                                        'idRoom': serializeParam(
+                                          widget.idRoom,
+                                          ParamType.int,
+                                        ),
+                                      }.withoutNulls,
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBackground,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8, 12, 8, 12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    8, 0, 0, 0),
+                                            child: Icon(
+                                              Icons.search,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                              size: 24,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    12, 0, 0, 0),
+                                            child: Text(
+                                              'Thêm thành viên',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Plus Jakarta Sans',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ).animateOnPageLoad(animationsMap[
+                                    'containerOnPageLoadAnimation2']!),
+                              ),
                             Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
                               child: FFButtonWidget(
                                 onPressed: () async {
-                                  await FriendTable().update(
-                                    data: {
-                                      'name': _model.textController.text,
-                                    },
-                                    matchingRows: (rows) => rows
-                                        .eq(
-                                          'id_friends',
-                                          widget.idFriend,
-                                        )
-                                        .eq(
-                                          'id_user',
-                                          widget.idUser,
-                                        ),
-                                  );
+                                  await GroupChatTable().update(
+                                      data: {
+                                        'name': _model.textController.text,
+                                      },
+                                      matchingRows: (rows) => rows.eq(
+                                            'id',
+                                            widget.idRoom,
+                                          ));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(

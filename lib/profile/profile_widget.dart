@@ -692,6 +692,13 @@ class _ProfileWidgetState extends State<ProfileWidget>
                                         onPressed: () async {
                                           GoRouter.of(context)
                                               .prepareAuthEvent();
+                                          await UserTable().update(
+                                            data: {'device_token': ''},
+                                            matchingRows: (rows) => rows.eq(
+                                              'id',
+                                              currentUser!.uid,
+                                            ),
+                                          );
                                           await authManager.signOut();
                                           GoRouter.of(context)
                                               .clearRedirectLocation();
@@ -711,19 +718,23 @@ class _ProfileWidgetState extends State<ProfileWidget>
                                           iconPadding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   0, 0, 0, 0),
-                                          color: Color(0xFFF1F4F8),
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .bodyLarge
                                               .override(
                                                 fontFamily: 'Plus Jakarta Sans',
-                                                color: Color(0xFF14181B),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.normal,
                                               ),
                                           elevation: 0,
                                           borderSide: BorderSide(
-                                            color: Color(0xFFE0E3E7),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             width: 1,
                                           ),
                                           borderRadius:

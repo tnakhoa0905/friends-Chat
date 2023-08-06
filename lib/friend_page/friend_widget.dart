@@ -1,3 +1,6 @@
+import 'package:chat_app/backend/supabase/database/tables/group_chat.dart';
+import 'package:chat_app/backend/supabase/database/tables/group_chat_detail.dart';
+
 import '/backend/supabase/supabase.dart';
 import '/components/empty_list_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -43,12 +46,12 @@ class _FriendWidgetState extends State<FriendWidget> {
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
           backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           automaticallyImplyLeading: false,
           title: Text(
-            'Bạn bè',
+            'Danh sách kết bạn',
             style: FlutterFlowTheme.of(context).headlineSmall,
           ),
           actions: [],
@@ -97,7 +100,6 @@ class _FriendWidgetState extends State<FriendWidget> {
                       itemBuilder: (context, listViewIndex) {
                         final listViewFriendRow =
                             listViewFriendRowList[listViewIndex];
-                        print(listViewFriendRow.id);
                         return Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
                           child: Container(
@@ -190,6 +192,35 @@ class _FriendWidgetState extends State<FriendWidget> {
                                                               listViewFriendRow
                                                                   .avt,
                                                           'active': true
+                                                        });
+                                                        var result =
+                                                            await GroupChatTable()
+                                                                .insert({
+                                                          'name':
+                                                              listViewFriendRow
+                                                                  .name,
+                                                          'avt':
+                                                              listViewFriendRow
+                                                                  .avt
+                                                        });
+                                                        print(
+                                                            '${listViewFriendRow.idUser} insert 1');
+                                                        await GroupChatDetailTable()
+                                                            .insert({
+                                                          'user_id':
+                                                              currentUserUid,
+                                                          "id_group_chat":
+                                                              result.id
+                                                        });
+                                                        print(
+                                                            '${listViewFriendRow.idUser} insert 2');
+                                                        await GroupChatDetailTable()
+                                                            .insert({
+                                                          'user_id':
+                                                              listViewFriendRow
+                                                                  .idUser,
+                                                          "id_group_chat":
+                                                              result.id
                                                         });
                                                         setState(() {});
                                                       },

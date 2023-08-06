@@ -1,5 +1,9 @@
+import 'package:chat_app/backend/supabase/database/tables/group_chat.dart';
+import 'package:chat_app/flutter_flow/upload_data.dart';
+import 'package:chat_app/notifications/fcm_notification.dart';
 import 'package:timeago/timeago.dart';
 
+import '../backend/supabase/database/tables/message_group.dart';
 import '../models/message.dart';
 import '../models/profile.dart';
 import '/backend/supabase/supabase.dart';
@@ -24,7 +28,7 @@ class AudioChatDemoWidget extends StatefulWidget {
     required this.idChat,
   }) : super(key: key);
 
-  final String idChat;
+  final int idChat;
 
   @override
   _AudioChatDemoWidgetState createState() => _AudioChatDemoWidgetState();
@@ -32,24 +36,26 @@ class AudioChatDemoWidget extends StatefulWidget {
 
 class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
   late AudioChatDemoModel _model;
-
+  List<String> listUserNotif = [];
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late final Stream<List<Message>> _messagesStream;
   final Map<String, Profile> _profileCache = {};
+  late NotificationFCM _notificationFCM;
   @override
   void initState() {
     super.initState();
+    print('+++++++++++++' + '${widget.idChat}');
     _model = createModel(context, () => AudioChatDemoModel());
-
+    _notificationFCM = NotificationFCM();
     _model.textController ??= TextEditingController();
     _messagesStream = SupaFlow.client
-        .from('messages')
+        .from('messageGroupDetail')
         .stream(primaryKey: ['id'])
+        .eq("room_id", widget.idChat)
         .order('created_at')
         .map((maps) => maps
             .map((map) => Message.fromMap(map, currentUser!.uid!))
             .toList());
-    print(_messagesStream);
   }
 
   Future<void> _loadProfileCache(
@@ -63,7 +69,6 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
         .select()
         .eq('id', profileId)
         .single();
-    print(data);
     final profile = Profile.fromMap(data);
     setState(() {
       _profileCache[profileId] = profile;
@@ -73,7 +78,6 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
   }
 
@@ -115,18 +119,12 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 2.0),
-                          child: FutureBuilder<List<FriendRow>>(
-                            future: FriendTable().querySingleRow(
-                              queryFn: (q) => q
-                                  .eq(
-                                    'id_user',
-                                    currentUserUid,
-                                  )
-                                  .eq(
-                                    'id_friends',
-                                    widget.idChat,
-                                  ),
-                            ),
+                          child: FutureBuilder<List<GroupChatRow>>(
+                            future: GroupChatTable().querySingleRow(
+                                queryFn: (q) => q.eq(
+                                      'id',
+                                      widget.idChat,
+                                    )),
                             builder: (context, snapshot) {
                               // Customize what your widget looks like when it's loading.
                               if (!snapshot.hasData) {
@@ -143,11 +141,11 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                   ),
                                 );
                               }
-                              List<FriendRow> columnFriendRowList =
+                              List<GroupChatRow> columnGroupChatRowList =
                                   snapshot.data!;
-                              final columnFriendRow =
-                                  columnFriendRowList.isNotEmpty
-                                      ? columnFriendRowList.first
+                              final columnGroupChatRow =
+                                  columnGroupChatRowList.isNotEmpty
+                                      ? columnGroupChatRowList.first
                                       : null;
                               return Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -163,7 +161,10 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        context.safePop();
+                                        if (Navigator.of(context).canPop()) {
+                                          context.pop();
+                                        }
+                                        context.pushNamed('HomePage');
                                       },
                                       child: Container(
                                         width: 50.0,
@@ -193,19 +194,44 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        context.pushNamed(
-                                          'EditUser',
-                                          queryParameters: {
-                                            'idUser': serializeParam(
-                                              currentUserUid,
-                                              ParamType.String,
-                                            ),
-                                            'idFriend': serializeParam(
-                                              columnFriendRow?.idFriends,
-                                              ParamType.String,
-                                            ),
-                                          }.withoutNulls,
-                                        );
+                                        if (columnGroupChatRow!.isGroup ==
+                                            true) {
+                                          context.pushNamed(
+                                            'EditUser',
+                                            queryParameters: {
+                                              'idUser': serializeParam(
+                                                currentUserUid,
+                                                ParamType.String,
+                                              ),
+                                              'idRoom': serializeParam(
+                                                columnGroupChatRow!.id,
+                                                ParamType.int,
+                                              ),
+                                              'isUser': serializeParam(
+                                                false,
+                                                ParamType.bool,
+                                              ),
+                                            }.withoutNulls,
+                                          );
+                                        } else {
+                                          context.pushNamed(
+                                            'EditUser',
+                                            queryParameters: {
+                                              'idUser': serializeParam(
+                                                currentUserUid,
+                                                ParamType.String,
+                                              ),
+                                              'idRoom': serializeParam(
+                                                columnGroupChatRow!.id,
+                                                ParamType.int,
+                                              ),
+                                              'isUser': serializeParam(
+                                                true,
+                                                ParamType.bool,
+                                              ),
+                                            }.withoutNulls,
+                                          );
+                                        }
                                       },
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
@@ -214,7 +240,7 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                         children: [
                                           Text(
                                             valueOrDefault<String>(
-                                              columnFriendRow?.name,
+                                              columnGroupChatRow?.name,
                                               '1',
                                             ),
                                             style: FlutterFlowTheme.of(context)
@@ -252,18 +278,18 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                             type: PageTransitionType.fade,
                                             child: FlutterFlowExpandedImageView(
                                               image: Image.network(
-                                                columnFriendRow.avt!,
+                                                columnGroupChatRow.avt!,
                                                 fit: BoxFit.contain,
                                               ),
                                               allowRotation: false,
-                                              tag: columnFriendRow.avt!,
+                                              tag: columnGroupChatRow.avt!,
                                               useHeroAnimation: true,
                                             ),
                                           ),
                                         );
                                       },
                                       child: Hero(
-                                        tag: columnFriendRow!.avt!,
+                                        tag: columnGroupChatRow!.avt!,
                                         transitionOnUserGestures: true,
                                         child: Container(
                                           width: 40.0,
@@ -273,7 +299,7 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                             shape: BoxShape.circle,
                                           ),
                                           child: Image.network(
-                                            columnFriendRow.avt!,
+                                            columnGroupChatRow.avt!,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -293,15 +319,10 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                         stream: _messagesStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            final messages = [];
+                            final List<Message> messages = [];
                             for (var item in snapshot.data!) {
-                              if (currentUser!.uid! == item.profileId &&
-                                      widget.idChat == item.idChat ||
-                                  currentUser!.uid! == item.idChat &&
-                                      widget.idChat == item.profileId)
-                                messages.add(item);
+                              messages.add(item);
                             }
-                            print(messages.length);
                             return messages.isEmpty
                                 ? const Center(
                                     child:
@@ -313,23 +334,25 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                     itemCount: messages.length,
                                     itemBuilder: (context, index) {
                                       final message = messages[index];
-                                      _loadProfileCache(message.profileId);
+                                      _loadProfileCache(message.userId);
+
                                       if (index == 0)
                                         return _ChatBubble(
                                           message: message,
                                           profile:
-                                              _profileCache[message.profileId],
+                                              _profileCache[message.userId],
                                           isPadding: 8,
                                         );
                                       else
                                         return _ChatBubble(
                                           message: message,
                                           profile:
-                                              _profileCache[message.profileId],
+                                              _profileCache[message.userId],
                                           isPadding: 0,
                                         );
                                     });
                           } else {
+                            print('không tồn tại dữ liệu');
                             return Center(
                                 child: CircularProgressIndicator(
                                     color: Colors.blue[300]));
@@ -437,6 +460,77 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                 ),
                                 FlutterFlowIconButton(
                                   borderColor: Colors.transparent,
+                                  borderRadius: 30,
+                                  borderWidth: 1,
+                                  buttonSize: 60,
+                                  icon: Icon(
+                                    Icons.image_outlined,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    final selectedMedia =
+                                        await selectMediaWithSourceBottomSheet(
+                                      context: context,
+                                      storageFolderPath: 'chat',
+                                      allowPhoto: true,
+                                    );
+                                    if (selectedMedia != null &&
+                                        selectedMedia.every((m) =>
+                                            validateFileFormat(
+                                                m.storagePath, context))) {
+                                      setState(
+                                          () => _model.isDataUploading = true);
+                                      var selectedUploadedFiles =
+                                          <FFUploadedFile>[];
+                                      var downloadUrls = <String>[];
+                                      try {
+                                        selectedUploadedFiles = selectedMedia
+                                            .map((m) => FFUploadedFile(
+                                                  name: m.storagePath
+                                                      .split('/')
+                                                      .last,
+                                                  bytes: m.bytes,
+                                                  height: m.dimensions?.height,
+                                                  width: m.dimensions?.width,
+                                                  blurHash: m.blurHash,
+                                                ))
+                                            .toList();
+                                        downloadUrls =
+                                            await uploadSupabaseStorageFiles(
+                                          bucketName: 'image',
+                                          selectedFiles: selectedMedia,
+                                        );
+                                      } finally {
+                                        _model.isDataUploading = false;
+                                      }
+                                      if (selectedUploadedFiles.length ==
+                                              selectedMedia.length &&
+                                          downloadUrls.length ==
+                                              selectedMedia.length) {
+                                        setState(() {
+                                          _model.uploadedLocalFile =
+                                              selectedUploadedFiles.first;
+                                          _model.uploadedFileUrl =
+                                              downloadUrls.first;
+                                        });
+                                      } else {
+                                        setState(() {});
+                                        return;
+                                      }
+                                    }
+                                    if (_model.uploadedFileUrl.isEmpty) return;
+                                    await MessageGroupTable().insert({
+                                      'user_id': currentUserUid,
+                                      'room_id': widget.idChat,
+                                      'message': _model.uploadedFileUrl,
+                                      'type': 'image',
+                                    });
+                                  },
+                                ),
+                                FlutterFlowIconButton(
+                                  borderColor: Colors.transparent,
                                   borderRadius: 30.0,
                                   borderWidth: 1.0,
                                   buttonSize: 60.0,
@@ -449,17 +543,31 @@ class _AudioChatDemoWidgetState extends State<AudioChatDemoWidget> {
                                   onPressed: () async {
                                     final text = _model.textController.text;
 
+                                    print('sendNotification in audio chat');
+                                    final data = await SupaFlow.client
+                                        .from('user')
+                                        .select()
+                                        .eq('id', currentUser!.uid)
+                                        .single();
+
+                                    UserRow userRow = UserRow(data);
+
+                                    _notificationFCM.sendNotification(
+                                        _model.textController.text,
+                                        userRow,
+                                        widget.idChat);
+                                    print('------');
                                     if (text.isEmpty) {
                                       return;
                                     }
                                     _model.textController!.clear();
                                     try {
                                       await SupaFlow.client
-                                          .from('messages')
+                                          .from('messageGroupDetail')
                                           .insert({
-                                        'profile_id': currentUser!.uid,
-                                        'content': text,
-                                        'id_chat': widget.idChat
+                                        'user_id': currentUser!.uid,
+                                        'room_id': widget.idChat,
+                                        'message': text
                                       });
                                     } on PostgrestException catch (error) {
                                       ScaffoldMessenger.of(context)
@@ -534,25 +642,69 @@ class _ChatBubble extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Flexible(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      // overflow: TextOverflow.ellipsis,
-                                      '${message.content}',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.normal,
+                            message.type.contains('text') == true
+                                ? Wrap(
+                                    spacing: 0.0,
+                                    runSpacing: 0.0,
+                                    alignment: WrapAlignment.start,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.start,
+                                    direction: Axis.horizontal,
+                                    runAlignment: WrapAlignment.start,
+                                    verticalDirection: VerticalDirection.down,
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Text(
+                                        '${message.message}',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                      ),
+                                    ],
+                                  )
+                                : InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      print('tap');
+                                      await Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType.fade,
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            child: FlutterFlowExpandedImageView(
+                                              image: Image.network(
+                                                message.message,
+                                                fit: BoxFit.contain,
+                                              ),
+                                              allowRotation: true,
+                                              tag: message.message,
+                                              useHeroAnimation: true,
+                                            ),
                                           ),
+                                        ),
+                                      );
+                                    },
+                                    child: Hero(
+                                      tag: message.message,
+                                      transitionOnUserGestures: true,
+                                      child: Image.network(
+                                        message.message,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -617,27 +769,66 @@ class _ChatBubble extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Wrap(
-                          spacing: 0.0,
-                          runSpacing: 0.0,
-                          alignment: WrapAlignment.start,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          direction: Axis.horizontal,
-                          runAlignment: WrapAlignment.start,
-                          verticalDirection: VerticalDirection.down,
-                          clipBehavior: Clip.none,
-                          children: [
-                            Text(
-                              '${message.content}',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.normal,
+                        message.type.contains('text') == true
+                            ? Wrap(
+                                spacing: 0.0,
+                                runSpacing: 0.0,
+                                alignment: WrapAlignment.start,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                direction: Axis.horizontal,
+                                runAlignment: WrapAlignment.start,
+                                verticalDirection: VerticalDirection.down,
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Text(
+                                    '${message.message}',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                   ),
-                            ),
-                          ],
-                        ),
+                                ],
+                              )
+                            : InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  print('tap');
+                                  await Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        child: FlutterFlowExpandedImageView(
+                                          image: Image.network(
+                                            message.message,
+                                            fit: BoxFit.contain,
+                                          ),
+                                          allowRotation: true,
+                                          tag: message.message,
+                                          useHeroAnimation: true,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Hero(
+                                  tag: message.message,
+                                  transitionOnUserGestures: true,
+                                  child: Image.network(
+                                    message.message,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
