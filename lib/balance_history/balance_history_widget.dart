@@ -1,4 +1,5 @@
 import 'package:chat_app/components/empty_list_widget.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../backend/supabase/database/tables/balance_history.dart';
 import '/auth/supabase_auth/auth_util.dart';
@@ -101,7 +102,7 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           16.0, 16.0, 0.0, 16.0),
                                       child: Text(
-                                        'Balance History',
+                                        'Lịch sử giao dịch',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -111,89 +112,88 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                             ),
                                       ),
                                     ),
-                                    if (currentUserUid ==
-                                        '3b821d85-7b11-4e4e-89ef-a0a141f60e05')
-                                      Align(
-                                        alignment:
-                                            AlignmentDirectional(1.0, 0.0),
-                                        child: Builder(
-                                          builder: (context) => Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 0.0, 12.0, 0.0),
-                                            child: FFButtonWidget(
-                                              onPressed: () async {
-                                                await showAlignedDialog(
-                                                  context: context,
-                                                  isGlobal: true,
-                                                  avoidOverflow: false,
-                                                  targetAnchor:
-                                                      AlignmentDirectional(
-                                                              0.0, 0.0)
-                                                          .resolve(
-                                                              Directionality.of(
-                                                                  context)),
-                                                  followerAnchor:
-                                                      AlignmentDirectional(
-                                                              0.0, 0.0)
-                                                          .resolve(
-                                                              Directionality.of(
-                                                                  context)),
-                                                  builder: (dialogContext) {
-                                                    return Material(
-                                                      color: Colors.transparent,
-                                                      child: GestureDetector(
-                                                        onTap: () => FocusScope
-                                                                .of(context)
-                                                            .requestFocus(_model
-                                                                .unfocusNode),
-                                                        child: NapTienWidget(),
-                                                      ),
-                                                    );
-                                                  },
-                                                ).then(
-                                                    (value) => setState(() {}));
-                                              },
-                                              text: 'Nạp tiền',
-                                              options: FFButtonOptions(
-                                                height: 40.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        24.0, 0.0, 24.0, 0.0),
-                                                iconPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Inter',
-                                                          color: Colors.white,
-                                                        ),
-                                                elevation: 3.0,
-                                                borderSide: BorderSide(
-                                                  color: Colors.transparent,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                              showLoadingIndicator: false,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                    // if (currentUserUid ==
+                                    //     '3b821d85-7b11-4e4e-89ef-a0a141f60e05')
+                                    //   Align(
+                                    //     alignment:
+                                    //         AlignmentDirectional(1.0, 0.0),
+                                    //     child: Builder(
+                                    //       builder: (context) => Padding(
+                                    //         padding:
+                                    //             EdgeInsetsDirectional.fromSTEB(
+                                    //                 0.0, 0.0, 12.0, 0.0),
+                                    //         child: FFButtonWidget(
+                                    //           onPressed: () async {
+                                    //             await showAlignedDialog(
+                                    //               context: context,
+                                    //               isGlobal: true,
+                                    //               avoidOverflow: false,
+                                    //               targetAnchor:
+                                    //                   AlignmentDirectional(
+                                    //                           0.0, 0.0)
+                                    //                       .resolve(
+                                    //                           Directionality.of(
+                                    //                               context)),
+                                    //               followerAnchor:
+                                    //                   AlignmentDirectional(
+                                    //                           0.0, 0.0)
+                                    //                       .resolve(
+                                    //                           Directionality.of(
+                                    //                               context)),
+                                    //               builder: (dialogContext) {
+                                    //                 return Material(
+                                    //                   color: Colors.transparent,
+                                    //                   child: GestureDetector(
+                                    //                     onTap: () => FocusScope
+                                    //                             .of(context)
+                                    //                         .requestFocus(_model
+                                    //                             .unfocusNode),
+                                    //                     child: NapTienWidget(),
+                                    //                   ),
+                                    //                 );
+                                    //               },
+                                    //             ).then(
+                                    //                 (value) => setState(() {}));
+                                    //           },
+                                    //           text: 'Nạp tiền',
+                                    //           options: FFButtonOptions(
+                                    //             height: 40.0,
+                                    //             padding: EdgeInsetsDirectional
+                                    //                 .fromSTEB(
+                                    //                     24.0, 0.0, 24.0, 0.0),
+                                    //             iconPadding:
+                                    //                 EdgeInsetsDirectional
+                                    //                     .fromSTEB(
+                                    //                         0.0, 0.0, 0.0, 0.0),
+                                    //             color:
+                                    //                 FlutterFlowTheme.of(context)
+                                    //                     .primary,
+                                    //             textStyle:
+                                    //                 FlutterFlowTheme.of(context)
+                                    //                     .titleSmall
+                                    //                     .override(
+                                    //                       fontFamily: 'Inter',
+                                    //                       color: Colors.white,
+                                    //                     ),
+                                    //             elevation: 3.0,
+                                    //             borderSide: BorderSide(
+                                    //               color: Colors.transparent,
+                                    //               width: 1.0,
+                                    //             ),
+                                    //             borderRadius:
+                                    //                 BorderRadius.circular(8.0),
+                                    //           ),
+                                    //           showLoadingIndicator: false,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
                                   ],
                                 ),
                                 Expanded(
                                   child: FutureBuilder<List<BalanceHistoryRow>>(
                                       future: BalanceHistoryTable().queryRows(
-                                        queryFn: (q) =>
-                                            q.eq("user_id", currentUser!.uid),
+                                        queryFn: (q) => q,
                                       ),
                                       builder: (context, snapshot) {
                                         if (!snapshot.hasData) {
@@ -213,15 +213,26 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                           );
                                         }
                                         List<BalanceHistoryRow>
-                                            listViewBalanceHistoryRowList =
+                                            listViewBalanceHistoryRowList = [];
+                                        List<BalanceHistoryRow> listSnapshot =
                                             snapshot.data!;
+
                                         double sum = 0;
+                                        for (var item in listSnapshot) {
+                                          if (item.userId!
+                                                  .contains(currentUserUid) ||
+                                              item.userIdSend!
+                                                  .contains(currentUserUid)) {
+                                            listViewBalanceHistoryRowList
+                                                .add(item);
+                                          }
+                                        }
                                         for (var item
                                             in listViewBalanceHistoryRowList) {
                                           sum += item.amount!;
                                         }
                                         double soDu =
-                                            columnUserRow!.openingBalance! -
+                                            columnUserRow!.openingBalance! +
                                                 sum;
                                         return DefaultTabController(
                                           length: 2,
@@ -442,10 +453,27 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                                   children: [
                                                                                                     Text(
-                                                                                                      valueOrDefault<String>(
-                                                                                                        containerUserRowList.where((e) => e.id == listViewBalanceHistoryRow.userIdSend).toList().first.name,
-                                                                                                        '3',
-                                                                                                      ),
+                                                                                                      listViewBalanceHistoryRow.userIdSend!.contains(currentUserUid) ? 'Nhận tiền từ' : 'Chuyển tiền đến',
+                                                                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                                            fontFamily: 'Outfit',
+                                                                                                            color: FlutterFlowTheme.of(context).primaryText,
+                                                                                                            fontSize: 14.0,
+                                                                                                            fontWeight: FontWeight.normal,
+                                                                                                          ),
+                                                                                                    ),
+                                                                                                    SizedBox(
+                                                                                                      height: 8,
+                                                                                                    ),
+                                                                                                    Text(
+                                                                                                      listViewBalanceHistoryRow.userIdSend!.contains(currentUserUid)
+                                                                                                          ? valueOrDefault<String>(
+                                                                                                              containerUserRowList.where((e) => e.id == listViewBalanceHistoryRow.userId).toList().first.name,
+                                                                                                              '3',
+                                                                                                            )
+                                                                                                          : valueOrDefault<String>(
+                                                                                                              containerUserRowList.where((e) => e.id == listViewBalanceHistoryRow.userIdSend).toList().first.name,
+                                                                                                              '3',
+                                                                                                            ),
                                                                                                       style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                                                             fontFamily: 'Outfit',
                                                                                                             color: FlutterFlowTheme.of(context).primaryText,
@@ -460,7 +488,7 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                                                                                     ))
                                                                                                       Text(
                                                                                                         valueOrDefault<String>(
-                                                                                                          listViewBalanceHistoryRow.amount?.toString(),
+                                                                                                          listViewBalanceHistoryRow.amount?.abs().toString(),
                                                                                                           '0',
                                                                                                         ),
                                                                                                         style: FlutterFlowTheme.of(context).titleMedium.override(
@@ -534,7 +562,7 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                                                                   Padding(
                                                                                     padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
                                                                                     child: Text(
-                                                                                      '$sum',
+                                                                                      '${sum.abs()}',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium,
                                                                                     ),
                                                                                   ),
@@ -680,47 +708,98 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                                                             ],
                                                                           ),
                                                                         ),
-                                                                        Builder(
-                                                                          builder: (context) =>
-                                                                              InkWell(
-                                                                            splashColor:
-                                                                                Colors.transparent,
-                                                                            focusColor:
-                                                                                Colors.transparent,
-                                                                            hoverColor:
-                                                                                Colors.transparent,
-                                                                            highlightColor:
-                                                                                Colors.transparent,
-                                                                            onTap:
-                                                                                () async {
-                                                                              await showAlignedDialog(
-                                                                                context: context,
-                                                                                isGlobal: true,
-                                                                                avoidOverflow: false,
-                                                                                targetAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                followerAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                builder: (dialogContext) {
-                                                                                  return Material(
-                                                                                    color: Colors.transparent,
-                                                                                    child: GestureDetector(
-                                                                                      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
-                                                                                      child: NapTienBanBeWidget(
-                                                                                        idSend: listViewFriendRow.idFriends!,
-                                                                                        soDu: soDu,
+                                                                        Row(
+                                                                          children: [
+                                                                            Builder(
+                                                                              builder: (context) => InkWell(
+                                                                                splashColor: Colors.transparent,
+                                                                                focusColor: Colors.transparent,
+                                                                                hoverColor: Colors.transparent,
+                                                                                highlightColor: Colors.transparent,
+                                                                                onTap: () async {
+                                                                                  await showAlignedDialog(
+                                                                                    context: context,
+                                                                                    isGlobal: true,
+                                                                                    avoidOverflow: false,
+                                                                                    targetAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                    followerAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                    builder: (dialogContext) {
+                                                                                      return Material(
+                                                                                        color: Colors.transparent,
+                                                                                        child: GestureDetector(
+                                                                                          onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+                                                                                          child: NapTienBanBeWidget(
+                                                                                            isSend: true,
+                                                                                            idSend: listViewFriendRow.idFriends!,
+                                                                                            soDu: soDu,
+                                                                                            tongTien: columnUserRow.openingBalance!,
+                                                                                            isAdmin: columnUserRow.role == 1 ? true : false,
+                                                                                          ),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                                  ).then((value) => setState(() {}));
+                                                                                },
+                                                                                child: Container(
+                                                                                  width: 40.0,
+                                                                                  height: 40.0,
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                  ),
+                                                                                  child: Builder(
+                                                                                    builder: (context) => InkWell(
+                                                                                      splashColor: Colors.transparent,
+                                                                                      focusColor: Colors.transparent,
+                                                                                      hoverColor: Colors.transparent,
+                                                                                      highlightColor: Colors.transparent,
+                                                                                      onTap: () async {
+                                                                                        await showAlignedDialog(
+                                                                                          context: context,
+                                                                                          isGlobal: true,
+                                                                                          avoidOverflow: false,
+                                                                                          targetAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                          followerAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                          builder: (dialogContext) {
+                                                                                            return Material(
+                                                                                              color: Colors.transparent,
+                                                                                              child: GestureDetector(
+                                                                                                onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+                                                                                                child: NapTienBanBeWidget(
+                                                                                                  isSend: true,
+                                                                                                  idSend: listViewFriendRow.idFriends!,
+                                                                                                  soDu: soDu,
+                                                                                                  isAdmin: columnUserRow.role == 1 ? true : false,
+                                                                                                  tongTien: columnUserRow.openingBalance!,
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                        ).then((value) => setState(() {}));
+                                                                                      },
+                                                                                      child: Card(
+                                                                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                        elevation: 1.0,
+                                                                                        shape: RoundedRectangleBorder(
+                                                                                          borderRadius: BorderRadius.circular(40.0),
+                                                                                        ),
+                                                                                        child: Padding(
+                                                                                          padding: EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
+                                                                                          child: Icon(
+                                                                                            Icons.add,
+                                                                                            color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                            size: 24.0,
+                                                                                          ),
+                                                                                        ),
                                                                                       ),
                                                                                     ),
-                                                                                  );
-                                                                                },
-                                                                              ).then((value) => setState(() {}));
-                                                                            },
-                                                                            child:
-                                                                                Container(
-                                                                              width: 40.0,
-                                                                              height: 40.0,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                  ),
+                                                                                ),
                                                                               ),
-                                                                              child: Builder(
+                                                                            ),
+                                                                            if (columnUserRow.role ==
+                                                                                1)
+                                                                              Builder(
                                                                                 builder: (context) => InkWell(
                                                                                   splashColor: Colors.transparent,
                                                                                   focusColor: Colors.transparent,
@@ -740,33 +819,77 @@ class _BalanceHistoryWidgetState extends State<BalanceHistoryWidget>
                                                                                             onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
                                                                                             child: NapTienBanBeWidget(
                                                                                               idSend: listViewFriendRow.idFriends!,
+                                                                                              tongTien: columnUserRow.openingBalance!,
+                                                                                              isSend: false,
                                                                                               soDu: soDu,
+                                                                                              isAdmin: columnUserRow.role == 1 ? true : false,
                                                                                             ),
                                                                                           ),
                                                                                         );
                                                                                       },
                                                                                     ).then((value) => setState(() {}));
                                                                                   },
-                                                                                  child: Card(
-                                                                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    elevation: 1.0,
-                                                                                    shape: RoundedRectangleBorder(
-                                                                                      borderRadius: BorderRadius.circular(40.0),
+                                                                                  child: Container(
+                                                                                    width: 40.0,
+                                                                                    height: 40.0,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: FlutterFlowTheme.of(context).secondaryBackground,
                                                                                     ),
-                                                                                    child: Padding(
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
-                                                                                      child: Icon(
-                                                                                        Icons.add,
-                                                                                        color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                        size: 24.0,
+                                                                                    child: Builder(
+                                                                                      builder: (context) => InkWell(
+                                                                                        splashColor: Colors.transparent,
+                                                                                        focusColor: Colors.transparent,
+                                                                                        hoverColor: Colors.transparent,
+                                                                                        highlightColor: Colors.transparent,
+                                                                                        onTap: () async {
+                                                                                          await showAlignedDialog(
+                                                                                            context: context,
+                                                                                            isGlobal: true,
+                                                                                            avoidOverflow: false,
+                                                                                            targetAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                            followerAnchor: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                            builder: (dialogContext) {
+                                                                                              return Material(
+                                                                                                color: Colors.transparent,
+                                                                                                child: GestureDetector(
+                                                                                                  onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+                                                                                                  child: NapTienBanBeWidget(
+                                                                                                    isSend: false,
+                                                                                                    idSend: listViewFriendRow.idFriends!,
+                                                                                                    tongTien: columnUserRow.openingBalance!,
+                                                                                                    soDu: soDu,
+                                                                                                    isAdmin: columnUserRow.role == 1 ? true : false,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          ).then((value) => setState(() {}));
+                                                                                        },
+                                                                                        child: Card(
+                                                                                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                                                          color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                          elevation: 1.0,
+                                                                                          shape: RoundedRectangleBorder(
+                                                                                            borderRadius: BorderRadius.circular(40.0),
+                                                                                          ),
+                                                                                          child: Align(
+                                                                                            alignment: AlignmentDirectional(0, 0),
+                                                                                            child: Padding(
+                                                                                              padding: EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
+                                                                                              child: FaIcon(
+                                                                                                FontAwesomeIcons.minus,
+                                                                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                                size: 24,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
                                                                                       ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ),
-                                                                          ),
+                                                                          ],
                                                                         ),
                                                                       ],
                                                                     ),

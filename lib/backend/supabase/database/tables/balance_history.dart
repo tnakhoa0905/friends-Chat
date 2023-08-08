@@ -32,4 +32,7 @@ class BalanceHistoryRow extends SupabaseDataRow {
 
   String? get userIdSend => getField<String>('user_id_send');
   set userIdSend(String? value) => setField<String>('user_id_send', value);
+
+  bool? get isSend => getField<bool>('is_send');
+  set isSend(bool? value) => setField<bool>('is_send', value);
 }

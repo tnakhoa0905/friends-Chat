@@ -1,3 +1,8 @@
+import 'dart:math';
+
+import 'package:aligned_dialog/aligned_dialog.dart';
+import 'package:chat_app/components/tai_khoan_khong_du_widget.dart';
+
 import '../backend/supabase/database/tables/balance_history.dart';
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
@@ -15,11 +20,20 @@ import 'nap_tien_ban_be_model.dart';
 export 'nap_tien_ban_be_model.dart';
 
 class NapTienBanBeWidget extends StatefulWidget {
-  const NapTienBanBeWidget({Key? key, required this.idSend, required this.soDu})
+  const NapTienBanBeWidget(
+      {Key? key,
+      required this.idSend,
+      required this.soDu,
+      required this.tongTien,
+      required this.isSend,
+      required this.isAdmin})
       : super(key: key);
 
   final String idSend;
   final double soDu;
+  final bool isAdmin;
+  final double tongTien;
+  final bool isSend;
 
   @override
   _NapTienBanBeWidgetState createState() => _NapTienBanBeWidgetState();
@@ -82,7 +96,7 @@ class _NapTienBanBeWidgetState extends State<NapTienBanBeWidget> {
                       padding:
                           EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
                       child: Text(
-                        'Nạp tiền',
+                        widget.isAdmin == false ? 'Nạp tiền' : 'Trừ tiền',
                         style: FlutterFlowTheme.of(context).headlineSmall,
                       ),
                     ),
@@ -253,24 +267,93 @@ class _NapTienBanBeWidgetState extends State<NapTienBanBeWidget> {
               ),
               Align(
                 alignment: AlignmentDirectional(1.0, 0.0),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 12.0, 0.0),
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      print(currentUserUid);
-                      if (widget.soDu < _model.moneyValue!) {
-                        print('ko đc');
-                      } else
-                        await BalanceHistoryTable().insert({
-                          'user_id': currentUserUid,
-                          'amount': _model.moneyValue,
-                          'note': _model.noteController.text,
-                          'user_id_send': widget.idSend,
+                      if (widget.isAdmin == true) {
+                        print('1');
+                        if (widget.isSend == true) {
+                          print('2');
+                          await BalanceHistoryTable().insert({
+                            'user_id': currentUserUid,
+                            'amount': _model.moneyValue! * -1,
+                            'user_id_send': widget.idSend,
+                            'note': _model.noteController.text,
+                          });
+                        } else {
+                          await BalanceHistoryTable().insert({
+                            'user_id': currentUserUid,
+                            'amount': _model.moneyValue! * -1,
+                            'user_id_send': widget.idSend,
+                            'note': _model.noteController.text,
+                          });
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Giao dịch thành công...',
+                              style: TextStyle(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                              ),
+                            ),
+                            duration: Duration(milliseconds: 4000),
+                            backgroundColor:
+                                FlutterFlowTheme.of(context).primaryText,
+                          ),
+                        );
+                        context.safePop();
+                      } else {
+                        print('user');
+                        var result = await SupaFlow.client
+                            .rpc('transaction_money', params: {
+                          'id_input': currentUserUid,
+                          'amount_input': _model.moneyValue! * -1,
+                          'id_send': widget.idSend,
+                          'note_input': _model.noteController.text,
                         });
 
-                      context.safePop();
+                        if (result == true) {
+                          print('đc rồi');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Chuyển tiền thành công...',
+                                style: TextStyle(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                ),
+                              ),
+                              duration: Duration(milliseconds: 4000),
+                              backgroundColor:
+                                  FlutterFlowTheme.of(context).primaryText,
+                            ),
+                          );
+                          context.safePop();
+                        } else {
+                          print('thiếu tiền nhé');
+                          await showAlignedDialog(
+                            context: context,
+                            isGlobal: true,
+                            avoidOverflow: false,
+                            targetAnchor: AlignmentDirectional(0, 0)
+                                .resolve(Directionality.of(context)),
+                            followerAnchor: AlignmentDirectional(0, 0)
+                                .resolve(Directionality.of(context)),
+                            builder: (dialogContext) {
+                              return Material(
+                                color: Colors.transparent,
+                                child: TaiKhoanKhongDuWidget(),
+                              );
+                            },
+                          ).then((value) => setState(() {}));
+                        }
+                      }
                     },
-                    text: 'Nạp tiền',
+                    text: widget.isSend == true ? 'Nạp tiền' : 'Trừ tiền',
                     options: FFButtonOptions(
                       height: 40.0,
                       padding:
@@ -298,5 +381,27 @@ class _NapTienBanBeWidgetState extends State<NapTienBanBeWidget> {
         ),
       ),
     );
+  }
+
+  Future<double> checkMoney(double tongTien) async {
+    List<BalanceHistoryRow> listViewBalanceHistoryRowList = [];
+    List<BalanceHistoryRow> listSnapshot =
+        await BalanceHistoryTable().queryRows(queryFn: (q) => q);
+
+    double sum = 0;
+    for (var item in listSnapshot) {
+      if (item.userId!.contains(currentUserUid) ||
+          item.userIdSend!.contains(currentUserUid)) {
+        listViewBalanceHistoryRowList.add(item);
+      }
+    }
+    for (var item in listViewBalanceHistoryRowList) {
+      if (item.userId!.contains(currentUserUid)) {
+        sum += item.amount!;
+      } else
+        sum -= item.amount!;
+    }
+    double soDu = tongTien - sum;
+    return soDu;
   }
 }
