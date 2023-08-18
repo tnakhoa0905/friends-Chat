@@ -55,6 +55,10 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+         manifestPlaceholders += [
+								// *account_id* will be unique for every single app
+                'appAuthRedirectScheme': applicationId
+        ]
     }
 
    signingConfigs {

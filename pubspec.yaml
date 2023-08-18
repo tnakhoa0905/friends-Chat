@@ -90,6 +90,8 @@ dependencies:
   flutter_local_notifications: ^15.1.0+1
   firebase_analytics: ^10.4.4
   dropdown_button2: ^2.3.7
+  flutter_appauth: ^6.0.2
+  crypto: ^3.0.3
 
 dependency_overrides:
   rxdart: 0.27.7

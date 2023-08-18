@@ -1,4 +1,8 @@
+import 'package:chat_app/login/login_button.dart';
+import 'package:provider/provider.dart';
+
 import '../backend/supabase/supabase.dart';
+
 import '/auth/supabase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -8,9 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'login_model.dart';
 export 'login_model.dart';
+
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -1243,6 +1251,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                         ),
                                       ),
                                     ),
+                                    ButtonLogin()
                                   ],
                                 ),
                               ).animateOnPageLoad(animationsMap[

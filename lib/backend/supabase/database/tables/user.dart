@@ -38,4 +38,14 @@ class UserRow extends SupabaseDataRow {
 
   DateTime? get startDate => getField<DateTime>('start_date');
   set startDate(DateTime? value) => setField<DateTime>('start_date', value);
+
+  String? get phoneNumber => getField<String>('phone_number');
+  set phoneNumber(String? value) => setField<String>('phone_number', value);
+
+  String? get email => getField<String>('email');
+  set email(String? value) => setField<String>('email', value);
+
+  DateTime? get dateOfBirth => getField<DateTime>('date_of_birth');
+  set dateOfBirth(DateTime? value) =>
+      setField<DateTime>('date_of_birth', value);
 }

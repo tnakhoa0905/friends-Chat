@@ -13,16 +13,30 @@ class EditProfileModel extends FlutterFlowModel {
 
   final unfocusNode = FocusNode();
   // State field(s) for TextField widget.
-  TextEditingController? textController;
-  String? Function(BuildContext, String?)? textControllerValidator;
-
-  /// Initialization and disposal methods.
+ 
+  // State field(s) for TextField widget.
+  TextEditingController? textController1;
+  String? Function(BuildContext, String?)? textController1Validator;
+  // State field(s) for phoneNumber widget.
+  TextEditingController? phoneNumberController;
+  String? Function(BuildContext, String?)? phoneNumberControllerValidator;
+  // State field(s) for email widget.
+  TextEditingController? emailController;
+  String? Function(BuildContext, String?)? emailControllerValidator;
+  DateTime? datePicked;
+  // State field(s) for date widget.
+  TextEditingController? dateController;
+  String? Function(BuildContext, String?)? dateControllerValidator;
 
   void initState(BuildContext context) {}
 
   void dispose() {
-    unfocusNode.dispose();
-    textController?.dispose();
+    
+     unfocusNode.dispose();
+    textController1?.dispose();
+    phoneNumberController?.dispose();
+    emailController?.dispose();
+    dateController?.dispose();
   }
 
   /// Action blocks are added here.
